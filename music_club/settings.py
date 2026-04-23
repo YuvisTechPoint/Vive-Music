@@ -28,6 +28,14 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1', 'yes']
 
 ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '.vercel.app']
 
+# CSRF trusted origins for deployment
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'https://vibemusic-sandy.vercel.app',
+    'https://*.vercel.app'
+]
+
 # Application definition
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
@@ -153,6 +161,19 @@ if os.environ.get('VERCEL'):
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+    
+    # Fix for Vercel deployment
+    CSRF_TRUSTED_ORIGINS = [
+        'https://vibemusic-sandy.vercel.app',
+        'https://*.vercel.app'
+    ]
+    
+    # Allow redirects to work properly
+    SECURE_REDIRECT_EXEMPT = []
+    
+    # Fix session cookie domain
+    SESSION_COOKIE_DOMAIN = '.vercel.app'
+    CSRF_COOKIE_DOMAIN = '.vercel.app'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

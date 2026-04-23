@@ -174,6 +174,9 @@ def login_attempt(request):
             if 'redirectlurll' in request.session:
                 ss = request.session.get('redirectlurll')
                 del request.session['redirectlurll']
+                # Ensure the redirect URL is absolute for Vercel
+                if ss.startswith('/'):
+                    ss = ss
                 return redirect(ss)
             else:
                 return redirect('/user/dashboard/')
@@ -192,6 +195,9 @@ def login_attempt(request):
         if 'redirectlurll' in request.session:
             ss = request.session.get('redirectlurll')
             del request.session['redirectlurll']
+            # Ensure the redirect URL is absolute for Vercel
+            if ss.startswith('/'):
+                ss = ss
             return redirect(ss)
         else:
             return redirect('/user/dashboard/')
