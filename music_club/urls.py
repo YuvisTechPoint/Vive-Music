@@ -23,6 +23,7 @@ from django.views.static import serve
 urlpatterns = [
 
     path('', home ),
+    path('favicon.ico', lambda request: redirect('/static/admin/folder/images/logo-mini-music-club.png')),
     # legacy link used in templates: redirect to the user category listing
     path('shop/by-category/', lambda request: redirect('/user/category/')),
     path('admin_side/', admin.site.urls),

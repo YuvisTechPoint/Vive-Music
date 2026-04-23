@@ -21,9 +21,6 @@ from django.core.wsgi import get_wsgi_application
 # Create the application
 application = get_wsgi_application()
 
-# For Vercel serverless functions
-def handler(event, context):
-    return application(event, context)
-
-# Export for Vercel
-app = handler
+# Export the Django WSGI app directly for Vercel.
+app = application
+handler = application
