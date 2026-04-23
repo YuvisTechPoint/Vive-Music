@@ -26,11 +26,21 @@ class productModel(models.Model):
     pro_width = models.IntegerField(null=True)
     pro_length = models.IntegerField(null=True)
 
+    instrument_condition = models.CharField(max_length=50, null=True, blank=True, default='New')
+    instrument_material = models.CharField(max_length=100, null=True, blank=True)
+    skill_level = models.CharField(max_length=50, null=True, blank=True)
+
     pro_image = models.ImageField(upload_to='Admin/ProductImage/Main', default='default.jpg', null=True, blank=True)
     pro_back_image = models.ImageField(upload_to='Admin/ProductImage/Back', default='default.jpg', null=True,
                                        blank=True)
     feature_image = models.ImageField(upload_to='Admin/ProductImage/Feature', default='default.jpg', null=True,
                                       blank=True)
+
+    def __init__(self, *args, **kwargs):
+        # Backward compatibility for legacy upload handlers/templates.
+        if 'product_image' in kwargs and 'pro_image' not in kwargs:
+            kwargs['pro_image'] = kwargs.pop('product_image')
+        super().__init__(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         # Delete the image file when the product is deleted

@@ -1,0 +1,161 @@
+{% extends 'user/index.html' %}
+{% load static %}
+{% block title %} New Arrivals | Vibe Music {% endblock %}
+
+{% block content %}
+<style>
+    .nowshipping-page { padding: 60px 0; background: #f8f9fa; min-height: 600px; }
+    .nowshipping-header { text-align: center; margin-bottom: 50px; }
+    .nowshipping-header h1 { font-size: 42px; font-weight: 800; color: #111; margin-bottom: 15px; }
+    .nowshipping-header p { font-size: 18px; color: #666; max-width: 600px; margin: 0 auto; }
+    
+    .new-arrivals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+    .product-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: all 0.3s ease; text-decoration: none; display: block; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    
+    .product-card .img-wrap { height: 220px; padding: 20px; display: flex; align-items: center; justify-content: center; background: #fff; position: relative; }
+    .product-card .img-wrap img { max-height: 100%; max-width: 100%; object-fit: contain; }
+    .product-card .img-wrap .new-badge { position: absolute; top: 15px; left: 15px; background: #d71920; color: #fff; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .product-card .info { padding: 20px; border-top: 1px solid #f5f5f5; }
+    .product-card .info h3 { font-size: 16px; font-weight: 600; color: #0071c5; margin-bottom: 10px; line-height: 1.4; height: 44px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .product-card .info .brand { font-size: 13px; color: #888; margin-bottom: 8px; text-transform: uppercase; font-weight: 600; }
+    .product-card .info .price { font-size: 20px; font-weight: 700; color: #d71920; display: block; margin-bottom: 5px; }
+    .product-card .info .original { font-size: 14px; color: #999; text-decoration: line-through; margin-left: 8px; }
+    .product-card .info .shipping { font-size: 12px; color: #2e7d32; font-weight: 600; margin-top: 10px; }
+    
+    .category-filter { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
+    .category-filter button { padding: 10px 25px; border: 2px solid #eaeaea; background: #fff; color: #666; font-size: 14px; font-weight: 600; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; }
+    .category-filter button:hover, .category-filter button.active { border-color: #0071c5; background: #0071c5; color: #fff; }
+    
+    @media (max-width: 768px) {
+        .new-arrivals-grid { grid-template-columns: 1fr; }
+        .nowshipping-header h1 { font-size: 32px; }
+    }
+</style>
+
+<div class="nowshipping-page">
+    <div class="container">
+        <div class="nowshipping-header">
+            <h1>New Arrivals</h1>
+            <p>Check out the latest musical instruments & music gear. We're shipping the hottest new gear straight to you.</p>
+        </div>
+        
+        <div class="category-filter">
+            <button class="active">All</button>
+            <button>Guitars</button>
+            <button>Basses</button>
+            <button>Drums</button>
+            <button>Keyboards</button>
+            <button>Audio</button>
+            <button>Accessories</button>
+        </div>
+        
+        <div class="new-arrivals-grid">
+            <a href="#" class="product-card">
+                <div class="img-wrap">
+                    <span class="new-badge">NEW</span>
+                    <img src="https://images.unsplash.com/photo-1550985543-f976660aad86?w=300&h=300&fit=crop" alt="Electric Guitar">
+                </div>
+                <div class="info">
+                    <div class="brand">Fender</div>
+                    <h3>Player Stratocaster HH - Maple Fingerboard - Polar White</h3>
+                    <span class="price"><i class="fa fa-inr"></i> 45,999</span>
+                    <span class="shipping">Free Shipping</span>
+                </div>
+            </a>
+            
+            <a href="#" class="product-card">
+                <div class="img-wrap">
+                    <span class="new-badge">NEW</span>
+                    <img src="https://images.unsplash.com/photo-1510915228340-29c85a36856e?w=300&h=300&fit=crop" alt="Acoustic Guitar">
+                </div>
+                <div class="info">
+                    <div class="brand">Martin</div>
+                    <h3>D-28E Retro - Acoustic-Electric Guitar - Sunburst</h3>
+                    <span class="price"><i class="fa fa-inr"></i> 1,85,000</span>
+                    <span class="shipping">Free Shipping</span>
+                </div>
+            </a>
+            
+            <a href="#" class="product-card">
+                <div class="img-wrap">
+                    <span class="new-badge">NEW</span>
+                    <img src="https://images.unsplash.com/photo-1549429443-bd2ed62bb4e2?w=300&h=300&fit=crop" alt="Bass Guitar">
+                </div>
+                <div class="info">
+                    <div class="brand">Music Man</div>
+                    <h3>StingRay 5 HH - 5-String Bass Guitar - Neptune Blue</h3>
+                    <span class="price"><i class="fa fa-inr"></i> 1,25,000</span>
+                    <span class="shipping">Free Shipping</span>
+                </div>
+            </a>
+            
+            <a href="#" class="product-card">
+                <div class="img-wrap">
+                    <span class="new-badge">NEW</span>
+                    <img src="https://images.unsplash.com/photo-1524230659092-7f4836a88e2a?w=300&h=300&fit=crop" alt="Keyboard">
+                </div>
+                <div class="info">
+                    <div class="brand">Nord</div>
+                    <h3>Stage 3 - 88-Key Performance Keyboard - Red</h3>
+                    <span class="price"><i class="fa fa-inr"></i> 2,45,000</span>
+                    <span class="shipping">Free Shipping</span>
+                </div>
+            </a>
+            
+            <a href="#" class="product-card">
+                <div class="img-wrap">
+                    <span class="new-badge">NEW</span>
+                    <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&h=300&fit=crop" alt="Drum Set">
+                </div>
+                <div class="info">
+                    <div class="brand">DW</div>
+                    <h3>Design Series - 5-Piece Shell Pack - White Marine Pearl</h3>
+                    <span class="price"><i class="fa fa-inr"></i> 95,000</span>
+                    <span class="shipping">Free Shipping</span>
+                </div>
+            </a>
+            
+            <a href="#" class="product-card">
+                <div class="img-wrap">
+                    <span class="new-badge">NEW</span>
+                    <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=300&h=300&fit=crop" alt="Studio Monitor">
+                </div>
+                <div class="info">
+                    <div class="brand">KRK</div>
+                    <h3>ROKIT 8 G4 - 8-inch Powered Studio Monitor - Pair</h3>
+                    <span class="price"><i class="fa fa-inr"></i> 55,000</span>
+                    <span class="shipping">Free Shipping</span>
+                </div>
+            </a>
+            
+            <a href="#" class="product-card">
+                <div class="img-wrap">
+                    <span class="new-badge">NEW</span>
+                    <img src="https://images.unsplash.com/photo-1511378565302-c02f4f1b4498?w=300&h=300&fit=crop" alt="Microphone">
+                </div>
+                <div class="info">
+                    <div class="brand">Shure</div>
+                    <h3>SM7B - Dynamic Vocal Microphone - Classic Design</h3>
+                    <span class="price"><i class="fa fa-inr"></i> 28,500</span>
+                    <span class="shipping">Free Shipping</span>
+                </div>
+            </a>
+            
+            <a href="#" class="product-card">
+                <div class="img-wrap">
+                    <span class="new-badge">NEW</span>
+                    <img src="https://images.unsplash.com/photo-1460036521480-c11c5e9f84bd?w=300&h=300&fit=crop" alt="Audio Interface">
+                </div>
+                <div class="info">
+                    <div class="brand">Universal Audio</div>
+                    <h3>Apollo Twin X - Thunderbolt 3 Audio Interface</h3>
+                    <span class="price"><i class="fa fa-inr"></i> 78,000</span>
+                    <span class="shipping">Free Shipping</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

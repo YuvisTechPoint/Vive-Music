@@ -1,0 +1,112 @@
+{% extends 'user/index.html' %}
+{% load static %}
+{% block title %} Articles & Videos | Vibe Music {% endblock %}
+
+{% block content %}
+<style>
+    .insync-page { padding: 60px 0; background: #f8f9fa; min-height: 600px; }
+    .insync-header { text-align: center; margin-bottom: 50px; }
+    .insync-header h1 { font-size: 36px; font-weight: 800; color: #111; margin-bottom: 15px; }
+    .insync-header p { font-size: 18px; color: #666; max-width: 600px; margin: 0 auto; }
+    
+    .research-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+    .research-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: all 0.3s ease; text-decoration: none; display: block; }
+    .research-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .research-card .img-wrap { height: 200px; overflow: hidden; }
+    .research-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .research-card .content { padding: 25px; }
+    .research-card .tag { display: inline-block; background: #0071c5; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 15px; }
+    .research-card h3 { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 10px; line-height: 1.4; }
+    .research-card p { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 15px; }
+    .research-card .read-more { color: #0071c5; font-weight: 600; font-size: 14px; }
+    .research-card .read-more i { margin-left: 5px; }
+    
+    @media (max-width: 768px) {
+        .research-grid { grid-template-columns: 1fr; }
+        .insync-header h1 { font-size: 28px; }
+    }
+</style>
+
+<div class="insync-page">
+    <div class="container">
+        <div class="insync-header">
+            <h1>Articles & Videos</h1>
+            <p>Expert advice, product reviews, and tutorials to help you make the most of your musical journey.</p>
+        </div>
+        
+        <div class="research-grid">
+            <a href="#" class="research-card">
+                <div class="img-wrap">
+                    <img src="https://images.unsplash.com/photo-1510915228340-29c85a36856e?w=400&h=200&fit=crop" alt="Article">
+                </div>
+                <div class="content">
+                    <span class="tag">BUYER'S GUIDE</span>
+                    <h3>Best Electric Guitars for Beginners in 2025</h3>
+                    <p>Our experts pick the top guitars for players just starting out.</p>
+                    <span class="read-more">Read More <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </a>
+            
+            <a href="#" class="research-card">
+                <div class="img-wrap">
+                    <img src="https://images.unsplash.com/photo-1511378565302-c02f4f1b4498?w=400&h=200&fit=crop" alt="Article">
+                </div>
+                <div class="content">
+                    <span class="tag">REVIEW</span>
+                    <h3>Top 10 Studio Monitors for Home Recording</h3>
+                    <p>Find the perfect monitors for your home studio setup.</p>
+                    <span class="read-more">Read More <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </a>
+            
+            <a href="#" class="research-card">
+                <div class="img-wrap">
+                    <img src="https://images.unsplash.com/photo-1524230659092-7f4836a88e2a?w=400&h=200&fit=crop" alt="Article">
+                </div>
+                <div class="content">
+                    <span class="tag">COMPARISON</span>
+                    <h3>Acoustic vs Electric: Which Guitar Is Right for You?</h3>
+                    <p>A comprehensive guide to choosing your first guitar.</p>
+                    <span class="read-more">Read More <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </a>
+            
+            <a href="#" class="research-card">
+                <div class="img-wrap">
+                    <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=200&fit=crop" alt="Article">
+                </div>
+                <div class="content">
+                    <span class="tag">TUTORIAL</span>
+                    <h3>How to Set Up Your First Home Recording Studio</h3>
+                    <p>Everything you need to know to start recording at home.</p>
+                    <span class="read-more">Read More <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </a>
+            
+            <a href="#" class="research-card">
+                <div class="img-wrap">
+                    <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&h=200&fit=crop" alt="Article">
+                </div>
+                <div class="content">
+                    <span class="tag">VIDEO</span>
+                    <h3>Drum Tuning Basics: A Step-by-Step Guide</h3>
+                    <p>Learn how to tune your drums for the best sound.</p>
+                    <span class="read-more">Watch Video <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </a>
+            
+            <a href="#" class="research-card">
+                <div class="img-wrap">
+                    <img src="https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&h=200&fit=crop" alt="Article">
+                </div>
+                <div class="content">
+                    <span class="tag">INTERVIEW</span>
+                    <h3>Meet the Pros: Studio Engineers Share Their Secrets</h3>
+                    <p>Industry professionals reveal their recording techniques.</p>
+                    <span class="read-more">Read More <i class="fas fa-chevron-right"></i></span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

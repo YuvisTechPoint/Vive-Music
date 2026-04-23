@@ -158,3 +158,39 @@ def remove_pro(request, hid):
             return redirect('/admin/product/')
     else:
         return redirect('/admin/')
+
+
+def filter_products_by_price(request):
+    """Filter products by price range for user-facing interface"""
+    min_price = request.GET.get('min_price', 0)
+    max_price = request.GET.get('max_price', None)
+    
+    try:
+        min_price = int(min_price) if min_price else 0
+        max_price = int(max_price) if max_price else None
+    except ValueError:
+        min_price = 0
+        max_price = None
+    
+    products = productModel.objects.all()
+    
+    if min_price:
+        products = products.filter(pro_price__gte=min_price)
+    
+    if max_price:
+        products = products.filter(pro_price__lte=max_price)
+    
+    products = products.order_by('pro_price')
+    
+    # Get categories for filter sidebar
+    categories = categoryModel.objects.all()
+    
+    context = {
+        'products': products,
+        'categories': categories,
+        'min_price': min_price,
+        'max_price': max_price,
+        'title': 'Products by Price Range'
+    }
+    
+    return render(request, 'user/product_filter.html', context)

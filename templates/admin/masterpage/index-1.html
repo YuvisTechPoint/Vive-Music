@@ -12,14 +12,14 @@
     
         <title>Admin | {% block title3 %} DashBoard {% endblock %}</title>
         
-        <meta name="author" content="Prathmesh Soni"/>
+        <meta name="author" content="Vibe Music"/>
         <meta name="description" content="Discover a harmonious shopping experience for music instruments in our E-Commerce store."/>
-        <meta property="og:title" content="Prathmesh Soni"/>
-        <meta property="og:site_name" content="Prathmesh Soni Music Club Website"/>
+        <meta property="og:title" content="Vibe Music"/>
+        <meta property="og:site_name" content="Vibe Music E-commerce Website"/>
         <meta property="og:url" content=""/>
         <meta property="og:description" content="Discover a harmonious shopping experience for music instruments in our E-Commerce store.">
         <meta property="og:type" content="website"/>
-        <meta property="og:image" content="https://music-club.prathmeshsoni.works/static/admin/folder/images/pretty-snap-25-09-2023.png"/>
+        <meta property="og:image" content="https://vibemusic.in/static/admin/folder/images/pretty-snap-25-09-2023.png"/>
 
     	<script src="https://use.fontawesome.com/c0fc7bc651.js"></script>
 
@@ -48,6 +48,9 @@
             }
       </style>
 
+      <!-- Custom admin overrides to align with site theme -->
+      <link rel="stylesheet" href="{% static 'admin/folder/css/admin-overrides.css' %}">
+
     </head>
     <body class="hold-transition skin-blue-light sidebar-mini" style="min-height: 100% !important; height: 100% !important;" >
 
@@ -64,7 +67,7 @@
                   </b>
                     <!-- logo-->
                     <span class="logo-lg">
-                    <img src="{% static 'admin/folder/images/logo-music-club.png' %}" alt="logo" style="width: 200px;height: 60px; mix-blend-mode: hue;" class="light-logo">
+                    <img src="{% static 'admin/folder/images/logo-vibemusic.svg' %}" alt="logo" style="width: 200px;height: 60px; mix-blend-mode: hue;" class="light-logo">
                   </span>
                 </a>
 
@@ -109,6 +112,20 @@
                     </ul>
                   </div>
         </nav>
+            <!-- Top utility bar similar to homepage for quick links -->
+            <div class="admin-top-utility">
+              <div class="container d-flex align-items-center justify-content-start">
+                <a href="/" class="utility-link active">Vibemusic</a>
+                <a href="/user/used" class="utility-link">Gear Exchange</a>
+                <a href="/user/integration/" class="utility-link">Integration</a>
+                <a href="/user/studios/" class="utility-link">Studios</a>
+                <div class="utility-spacer"></div>
+                <a href="/user/content-creators/" class="utility-link">Content Creators</a>
+                <a href="/user/home-audio/" class="utility-link">Home Audio</a>
+                <a href="/user/house-of-worship/" class="utility-link">House of Worship</a>
+                <a href="/user/immersive/" class="utility-link">Immersive</a>
+              </div>
+            </div>
             </header>
 
             <aside class="main-sidebar">
@@ -137,6 +154,30 @@
                         <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                         <span class="pull-right-container">
                           <!--<i class="fa fa-angle-right pull-right"></i>-->
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/realtime/">
+                        <i class="fa fa-bolt"></i> <span>Real-Time Dashboard</span>
+                        <span class="pull-right-container">
+                          <small class="badge badge-success">LIVE</small>
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/enhanced-realtime/">
+                        <i class="fa fa-rocket"></i> <span>Enhanced Dashboard</span>
+                        <span class="pull-right-container">
+                          <small class="badge badge-info">PRO</small>
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/product-management/">
+                        <i class="fa fa-box"></i> <span>Product Management</span>
+                        <span class="pull-right-container">
+                          <small class="badge badge-success">LIVE</small>
                         </span>
                       </a>
                     </li>
@@ -251,18 +292,7 @@
             {% endblock %}
 
             <footer class="main-footer" {% if titless %} style="position: fixed; bottom: 0; width: -webkit-fill-available;" {% endif %} >
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a href="https://prathmeshsoni.works/" target="_blank" class="nav-link">
-                            Prathmesh Soni <i class="fa fa-heart ml-1" style="color: red"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://prathmeshsoni.works/project/" target="_blank" class="nav-link">
-                            Project
-                        </a>
-                    </li>
-                </ul>
+              <span>Vibe Music Admin Panel</span>
             </footer>
             <div class="control-sidebar-bg"></div>
 

@@ -1,148 +1,152 @@
 {% extends 'user/index.html' %}
 {% load static %}
-{% block title %} Product List {% endblock %}
+{% block title %} All Products | Vibe Music {% endblock %}
+
+{% block css %}
+<style>
+    .category-page { background: #fff; padding: 40px 0; }
+    .category-header { margin-bottom: 40px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+    .category-header h1 { font-size: 36px; font-weight: 800; color: #111; margin-bottom: 10px; }
+    .category-header p { color: #666; font-size: 16px; }
+
+    .shop-layout { display: grid; grid-template-columns: 260px 1fr; gap: 40px; }
+    
+    /* FILTERS */
+    .filter-sidebar { border-right: 1px solid #eee; padding-right: 30px; }
+    .filter-group { margin-bottom: 30px; }
+    .filter-group h4 { font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; color: #111; }
+    .filter-list { list-style: none; }
+    .filter-list li { margin-bottom: 10px; }
+    .filter-list a { font-size: 14px; color: #555; transition: color .2s; }
+    .filter-list a:hover { color: var(--primary-blue); }
+
+    /* GRID */
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; }
+    
+    .product-card { border: 1px solid #f2f2f2; border-radius: 12px; overflow: hidden; background: #fff; transition: transform .3s, box-shadow .3s; display: flex; flex-direction: column; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-color: #ddd; }
+    
+    .product-card .thumb { height: 200px; padding: 20px; background: #fafafa; display: flex; align-items: center; justify-content: center; position: relative; }
+    .product-card .thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    
+    .product-card .meta { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .product-card .brand { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 8px; }
+    .product-card .name { font-size: 15px; font-weight: 700; color: #111; line-height: 1.3; margin-bottom: 15px; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .product-card .price-row { margin-top: auto; display: flex; align-items: flex-end; gap: 10px; }
+    .product-card .price { font-size: 20px; font-weight: 800; color: #d71920; }
+    .product-card .strike { font-size: 14px; color: #888; text-decoration: line-through; }
+    
+    .product-card .actions { margin-top: 15px; padding-top: 15px; border-top: 1px dotted #ddd; display: flex; justify-content: space-between; align-items: center; }
+    .add-btn { background: var(--primary-blue); color: #fff; border: none; padding: 8px 15px; border-radius: 4px; font-weight: 700; font-size: 13px; cursor: pointer; }
+    .add-btn:hover { background: #004d99; }
+
+    .empty-state { padding: 80px 0; text-align: center; color: #888; grid-column: span 3; }
+    .empty-state i { font-size: 48px; margin-bottom: 20px; opacity: 0.3; }
+
+    @media (max-width: 900px) {
+        .shop-layout { grid-template-columns: 1fr; }
+        .filter-sidebar { display: none; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="category-page">
+    <div class="container">
+        <div class="category-header">
+            <h1>All Products</h1>
+            <p>{% if q %}Search results for "{{q}}"{% else %}Discover the best musical instruments and professional audio gear.{% endif %}</p>
+        </div>
 
-<div class="breadcrumb-main pb-0">
-  <div class="container">
-      <div class="row">
-          <div class="col">
-              <div class="breadcrumb-contain">
-                  <div>
-                      <h2>category</h2>
-                      <ul>
-                          <li><a href="index-2.html">home</a></li>
-                          <li><i class="fa fa-angle-double-right"></i></li>
-                          <li><a href="javascript:void(0)">All Product</a></li>
-                      </ul>
-                      
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</div>
+        <div class="shop-layout">
+            <!-- Sidebar -->
+            <aside class="filter-sidebar">
+                <div class="filter-group">
+                    <h4>Categories</h4>
+                    <ul class="filter-list">
+                        <li><a href="/user/product/">All Products</a></li>
+                        <li><a href="/user/product/?sort=new">New Arrivals</a></li>
+                        <li><a href="/user/category/?type=used">Used Gear</a></li>
+                    </ul>
+                </div>
+                <div class="filter-group">
+                    <h4>Price Range</h4>
+                    <ul class="filter-list">
+                        <li><a href="#">Under <i class="fas fa-rupee-sign"></i> 5,000</a></li>
+                        <li><a href="#"><i class="fas fa-rupee-sign"></i> 5,000 - 25,000</a></li>
+                        <li><a href="#"><i class="fas fa-rupee-sign"></i> 25,000 - 1,00,000</a></li>
+                        <li><a href="#">Above <i class="fas fa-rupee-sign"></i> 1,00,000</a></li>
+                    </ul>
+                </div>
+            </aside>
 
-<section class="section-big-pt-space ratio_asos b-g-light">
-    <div class="collection-wrapper">
-        <div class="custom-container">
-            <div class="row">
-                <div class="collection-content col">
-                    <div class="page-main-content">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="collection-product-wrapper">
-                                    <div class="product-top-filter">
-                                        <div class="container-fluid p-0">
-                                            <div class="row">
-                                                <div class="col-12 position-relative">
-                                                    <div class="product-filter-content horizontal-filter-mian ">
-                                                        <!--<div class="horizontal-filter-toggle">-->
-                                                        <!--  <h4><i data-feather="filter"></i>letest filter</h4>-->
-                                                        <!--</div>-->
-                                                        <div class="collection-view">
-                                                            <ul>
-                                                                <li><i class="fa fa-th grid-layout-view"></i></li>
-                                                                <li><i class="fa fa-list-ul list-layout-view"></i></li>
-                                                            </ul>
-                                                        </div>
-                                                        <!--<div class="product-page-per-view">-->
-                                                        <!--    <select>-->
-                                                        <!--        <option value="High to low">24 Products Par Page</option>-->
-                                                        <!--        <option value="Low to High">50 Products Par Page</option>-->
-                                                        <!--        <option value="Low to High">100 Products Par Page</option>-->
-                                                        <!--    </select>-->
-                                                        <!--</div>-->
-                                                        <!--<div class="product-page-filter ">-->
-                                                        <!--    <select>-->
-                                                        <!--        <option value="High to low">Sorting items</option>-->
-                                                        <!--        <option value="Low to High">50 Products</option>-->
-                                                        <!--        <option value="Low to High">100 Products</option>-->
-                                                        <!--    </select>-->
-                                                        <!--</div>-->
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="product-wrapper-grid product">
-                                        <div class="row pb-4">
-                                          {% for i in pro_list %}
-                                              {% if i.pro_image %}
-                                                <div class="col-xl-2 col-lg-3 col-md-4 col-6 col-grid-box" >
-                                                <div class="product-box">
-                                                  <div class="product-imgbox">
-                                                    <div class="product-front">
-                                                      <a href="/user/product/{{i.id}}"> <img src="{{i.pro_image.url}}" class="img-fluid  " alt="product"> </a>
-                                                    </div>
-                                                    <div class="product-back">
-                                                      <a href="/user/product/{{i.id}}"> <img src="{{i.pro_image.url}}" class="img-fluid  " alt="product"> </a>
-                                                    </div>
-    
-    
-                                                  </div>
-                                                  <div class="product-detail detail-center detail-inverse" style="min-height: 100px;">
-                                                    <div class="detail-title-1 detail-title">
-                                                      <div class="detail-left">
-                                                        
-                                                        <p>{{i.pro_description}}</p>
-                                                        <a href="/user/product/{{i.id}}">
-                                                          <h6 class="price-title">
-                                                            {{i.productname}}
-                                                          </h6> </a>
-                                                      </div>
-                                                      <div class="detail-right">
-                                                        <div class="check-price"> <i class="fa fa-inr" aria-hidden="true"></i> {{i.strike_price}}.00 </div>
-                                                        <div class="price">
-                                                          <div class="price"> <i class="fa fa-inr" aria-hidden="true"></i> {{i.pro_price}}.00 </div>
-                                                        </div>
-                                                      </div>
-                                                    </div>
-                                                    <div class="icon-detail">
-                                                    <button  onclick="openquickk({{i.id}},0)" class="tooltip-top" data-tippy-content="Add to cart" >
-                                            <i  data-feather="shopping-cart"></i>
-                                                    </button>
-                                                      <a href="javascript:void(0)"  onclick="openquick({{i.id}})" > <i  data-feather="eye"></i> </a>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                              {% endif %}
-                                          {% endfor %}
-                                        </div>
-                                    </div>
-                                    <!--<div class="product-pagination">-->
-                                    <!--    <div class="theme-paggination-block">-->
-                                    <!--        <div class="container-fluid p-0">-->
-                                    <!--            <div class="row">-->
-                                    <!--                <div class="col-xl-6 col-md-6 col-sm-12">-->
-                                    <!--                    <nav aria-label="Page navigation">-->
-                                    <!--                        <ul class="pagination">-->
-                                    <!--                            <li class="page-item"><a class="page-link" href="javascript:void(0)" aria-label="Previous"><span aria-hidden="true"><i class="fa fa-chevron-left" aria-hidden="true"></i></span> <span class="sr-only">Previous</span></a></li>-->
-                                    <!--                            <li class="page-item "><a class="page-link" href="javascript:void(0)">1</a></li>-->
-                                    <!--                            <li class="page-item"><a class="page-link" href="javascript:void(0)">2</a></li>-->
-                                    <!--                            <li class="page-item"><a class="page-link" href="javascript:void(0)">3</a></li>-->
-                                    <!--                            <li class="page-item"><a class="page-link" href="javascript:void(0)" aria-label="Next"><span aria-hidden="true"><i class="fa fa-chevron-right" aria-hidden="true"></i></span> <span class="sr-only">Next</span></a></li>-->
-                                    <!--                        </ul>-->
-                                    <!--                    </nav>-->
-                                    <!--                </div>-->
-                                    <!--                <div class="col-xl-6 col-md-6 col-sm-12">-->
-                                    <!--                    <div class="product-search-count-bottom">-->
-                                    <!--                        <h5>Showing Products 1-24 of 10 Result</h5></div>-->
-                                    <!--                </div>-->
-                                    <!--            </div>-->
-                                    <!--        </div>-->
-                                    <!--    </div>-->
-                                    <!--</div>-->
+            <!-- Grid -->
+            <div class="product-grid">
+                {% if pro_list %}
+                    {% for i in pro_list %}
+                        {% if i.pro_image %}
+                        <div class="product-card">
+                            <div class="thumb">
+                                <a href="/user/product/{{i.id}}">
+                                    <img src="{{i.pro_image.url}}" alt="{{i.productname}}">
+                                </a>
+                            </div>
+                            <div class="meta">
+                                <div class="brand">{{i.brand|default:"Vibe Choice"}}</div>
+                                <a href="/user/product/{{i.id}}" class="name">{{i.productname}}</a>
+                                <div class="price-row">
+                                    <span class="price"><i class="fas fa-rupee-sign"></i> {{i.pro_price}}.00</span>
+                                    {% if i.strike_price %}
+                                    <span class="strike"><i class="fas fa-rupee-sign"></i> {{i.strike_price}}.00</span>
+                                    {% endif %}
+                                </div>
+                                <div class="actions">
+                                    <button class="add-btn" onclick="addCart({{i.id}})">+ Add to Cart</button>
+                                    <a href="/user/product/{{i.id}}" style="color: #0071c5; font-size: 13px; font-weight: 700;">Details</a>
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No Products Found</h3>
+                        <p>We couldn't find anything matching your request. Try broadening your search or browsing other categories.</p>
+                        <a href="/user/product/" class="btn" style="background:var(--primary-blue); color:#fff; border-radius:30px; padding:10px 30px; margin-top:20px; display:inline-block;">Browse All Gear</a>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
-</section>
+</div>
+{% endblock %}
 
+{% block script %}
+<script>
+    function addCart(pid) {
+        $.ajax({
+            url: "/user/cart/",
+            method: "POST",
+            data: {
+                'id': pid,
+                'ccartquntity': 1,
+                'var': '1',
+                'update_cart': '0',
+                csrfmiddlewaretoken: '{{csrf_token}}'
+            },
+            success: function (data) {
+                if(data.status === true) {
+                    alert("Product added to cart!");
+                    location.reload(); // Refresh to update badge
+                } else {
+                    alert("Error adding to cart. Out of stock?");
+                }
+            },
+            error: function() {
+                window.location.href = "/user/accounts/login/";
+            }
+        });
+    }
+</script>
 {% endblock %}

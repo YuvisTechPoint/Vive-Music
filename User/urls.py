@@ -2,12 +2,14 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from .views import *
+from Admin.product.views import filter_products_by_price
 
 urlpatterns = [
     path('classify-image/', classify_image, name='classify-image'),
     path('api/classify-image/', classify_image_api, name='classify-image-api'),
 
     path('', home, name="home"),
+    path('filter-products/', filter_products_by_price, name='filter_products_by_price'),
     path('tracker/', tracker, name='tracker'),
     path('change-password/', change_password, name='change_passwordd'),
     path('accounts/login/', login_attempt, name="login_attempt"),
@@ -34,6 +36,14 @@ urlpatterns = [
 
     path('orderrrr/', myorderrr),
     path('myaccount/', myaccount),
+    # Header/Top bar informational sections
+    path('used/', used_gear, name='used_gear'),
+    path('integration/', integration_page, name='integration_page'),
+    path('studios/', studios_page, name='studios_page'),
+    path('content-creators/', content_creators_page, name='content_creators'),
+    path('home-audio/', home_audio_page, name='home_audio'),
+    path('house-of-worship/', house_of_worship_page, name='house_of_worship'),
+    path('immersive/', immersive_page, name='immersive'),
     path('address/updete/', updateaddress),
     path('address/remove/', remove_address),
 
@@ -61,6 +71,12 @@ urlpatterns = [
          ),
          name='password_reset_complete'
          ),
+
+    path('insync/', insync_page, name='insync'),
+    path('nowshipping/', nowshipping_page, name='nowshipping'),
+    path('contact/', contact_page, name='contact'),
+    path('used/', used_gear_page, name='used_gear'),
+    path('used-gear/', used_gear_page, name='used_gear_alt'),
 
 ]
 

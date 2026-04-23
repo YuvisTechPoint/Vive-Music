@@ -18,9 +18,22 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
 from .views import *
+from . import views_realtime
+from . import views_product_management
 
 urlpatterns = [
     path('', dashboard),
+    path('realtime/', views_realtime.realtime_dashboard, name='realtime_dashboard'),
+    path('enhanced-realtime/', views_realtime.enhanced_realtime_dashboard, name='enhanced_realtime_dashboard'),
+    path('product-management/', views_product_management.product_management, name='product_management'),
+    path('api/product-upload/', views_product_management.ProductUploadAPI.as_view(), name='product_upload_api'),
+    path('api/product-update/', views_product_management.ProductUpdateAPI.as_view(), name='product_update_api'),
+    path('api/product-delete/', views_product_management.ProductDeleteAPI.as_view(), name='product_delete_api'),
+    path('api/products/', views_product_management.ProductListAPI.as_view(), name='product_list_api'),
+    path('api/bulk-upload/', views_product_management.bulk_product_upload, name='bulk_upload_api'),
+    path('api/dashboard/', views_realtime.DashboardDataAPI.as_view(), name='dashboard_api'),
+    path('api/inventory/', views_realtime.InventoryAPI.as_view(), name='inventory_api'),
+    path('api/update-stock/', views_realtime.update_product_stock, name='update_stock_api'),
     path('login_timer/', some_view),
     path('loginurl/', geturl),
     path('logout/', logout),

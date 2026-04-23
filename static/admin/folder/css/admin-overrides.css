@@ -1,0 +1,44 @@
+/* Custom admin overrides to match Vibe Music theme */
+:root{
+  --vibe-blue: #0d74a6;
+  --vibe-accent: #d71920;
+  --admin-bg:#f8f9fb;
+}
+
+/* Top utility bar */
+.admin-top-utility{background:var(--vibe-blue);color:#fff;padding:8px 0;font-size:14px}
+.admin-top-utility .container{display:flex;gap:14px}
+.admin-top-utility .utility-link{color:#fff;text-decoration:none;padding:8px 12px;border-radius:4px;opacity:0.95}
+.admin-top-utility .utility-link:hover{background:rgba(255,255,255,0.08);text-decoration:none}
+.admin-top-utility .utility-link.active{background:rgba(255,255,255,0.06);font-weight:700}
+.admin-top-utility .utility-spacer{flex:1}
+
+/* Header/logo tweaks */
+.main-header .logo-lg img{height:56px}
+
+/* Sidebar improvements */
+.main-sidebar{background:#ffffff;box-shadow:0 2px 6px rgba(15,15,15,0.03)}
+.sidebar-menu li a{color:#333}
+.sidebar-menu li.active>a, .sidebar-menu li>a:hover{background:rgba(13,116,166,0.06);color:var(--vibe-blue)}
+.sidebar-menu .user-profile a span{color:#222;font-weight:600}
+
+/* Footer */
+.main-footer{background:#fff;border-top:1px solid #eee;padding:12px 20px;color:#666}
+
+/* Cards and dashboard tiles */
+.box{border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.04)}
+.info-box .info-box-content{padding:18px}
+
+/* Vibe-styled card */
+.vibe-card{border-radius:12px;border:1px solid rgba(13,116,166,0.06);box-shadow:0 8px 24px rgba(13,116,166,0.04);overflow:hidden}
+
+/* Tables */
+.table thead th{background:linear-gradient(90deg,var(--vibe-blue),#136b99);color:#fff}
+.table tbody tr{background:#fff}
+.table .badge{border-radius:6px}
+
+/* Responsive tweaks */
+@media (max-width: 768px){
+  .admin-top-utility .container{flex-wrap:wrap}
+  .main-header .logo-lg img{height:44px}
+}

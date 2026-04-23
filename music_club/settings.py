@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'channels',
     'music_club',
     'User',
     'Admin',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'Admin.slider',
     'Admin.filter',
     'Admin.address_master',
+    'Admin.realtime',
     'crispy_forms',
 ]
 
@@ -148,3 +150,11 @@ EMAIL_HOST_PASSWORD = password
 
 RAZORPAY_KEY_ID = razorpay_key_id
 RAZORPAY_KEY_SECRET = razorpay_key_secret
+
+# Channels configuration for real-time functionality
+ASGI_APPLICATION = 'music_club.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}

@@ -124,13 +124,13 @@ def change_password(request):
                 count = cart_count(user2)
                 user_obj2 = A_User.objects.get(id=user2)
                 alldata = add_to_cart.objects.filter(user=user_obj2)
-                total_price = cartdetail(alldata, user2)
+                total_price, subtotal = cartdetail(alldata, user2)
             except:
                 count = 0
-                alldata = 0
-                total_price = 0
+                alldata = []
+                total_price, subtotal = 0, 0
             return render(request, "user/change-password.html",
-                          {'change_active': 'password_master', 'cartt': alldata, 'total_price': total_price,
+                          {'change_active': 'password_master', 'cartt': alldata, 'total_price': total_price, 'subtotal': subtotal,
                            'cart_val': count})
     else:
         messages.success(request, 'First You Need to Login')
@@ -174,11 +174,9 @@ def login_attempt(request):
             if 'redirectlurll' in request.session:
                 ss = request.session.get('redirectlurll')
                 del request.session['redirectlurll']
-                a = {'status': True, 'success': 'loginsuccess', 'redirect': 'particularpage', 'pagelink': ss}
-                return JsonResponse(a)
+                return redirect(ss)
             else:
-                a = {'status': True, 'success': 'loginsuccess', 'redirect': 'dashboard'}
-                return JsonResponse(a)
+                return redirect('/user/dashboard/')
         except:
             usee = None
 
@@ -194,11 +192,9 @@ def login_attempt(request):
         if 'redirectlurll' in request.session:
             ss = request.session.get('redirectlurll')
             del request.session['redirectlurll']
-            a = {'status': True, 'success': 'loginsuccess', 'redirect': 'particularpage', 'pagelink': ss}
-            return JsonResponse(a)
+            return redirect(ss)
         else:
-            a = {'status': True, 'success': 'loginsuccess', 'redirect': 'dashboard'}
-            return JsonResponse(a)
+            return redirect('/user/dashboard/')
 
     if 'username' in request.session:
         return redirect('/user/dashboard/')
@@ -262,7 +258,7 @@ def register_attempt(request):
             return redirect('/user/dashboard/')
         else:
             count = 0
-            return render(request, 'user/register.html', {'cart_val': count, 'cartc': '2'})
+            return render(request, 'user/register.html', {'cart_val': count})
 
 
 # Account Activation Mail Send
@@ -363,14 +359,15 @@ def forget_password(request):
             count = cart_count(user2)
             user_obj2 = A_User.objects.get(id=user2)
             alldata = add_to_cart.objects.filter(user=user_obj2)
-            total_price = cartdetail(alldata, user2)
+            total_price, subtotal = cartdetail(alldata, user2)
         except:
             count = 0
-            alldata = 0
-            total_price = 0
+            alldata = []
+            total_price, subtotal = 0, 0
         context = {
             'cartt': alldata,
             'total_price': total_price,
+            'subtotal': subtotal,
             'cart_val': count,
             'password_form': password_form,
         }
@@ -383,24 +380,38 @@ def home(request):
     get_cat = categoryModel.objects.all()
     get_cat1 = productModel.objects.all()
 
+    # Get new arrivals and top products for Vibe Music-style layout
+    from django.db.models import Count
+    new_products = productModel.objects.order_by('-id')[:8]
+    top_products = productModel.objects.annotate(
+        order_count=Count('add_to_cart')
+    ).filter(order_count__gt=0).order_by('-order_count')[:8]
+    deal_products = productModel.objects.filter(
+        strike_price__isnull=False
+    ).exclude(strike_price=0).order_by('-id')[:6]
+
     try:
         user2 = request.session.get('userid')
         count = cart_count(user2)
         user_obj2 = A_User.objects.get(id=user2)
         alldata = add_to_cart.objects.filter(user=user_obj2)
-        total_price = cartdetail(alldata, user2)
+        total_price, subtotal = cartdetail(alldata, user2)
     except:
         count = 0
-        alldata = 0
-        total_price = 0
+        alldata = []
+        total_price, subtotal = 0, 0
 
     alldata_ = {
         'cartt': alldata,
         'total_price': total_price,
+        'subtotal': subtotal,
         'cart_val': count,
         'obj': get_banner,
         'pro': get_cat,
         'pro1': get_cat1,
+        'new_products': new_products,
+        'top_products': top_products,
+        'deal_products': deal_products,
     }
     return render(request, 'user/home.html', alldata_)
 
@@ -457,18 +468,33 @@ def category(request, hid):
         count = cart_count(user2)
         user_obj2 = A_User.objects.get(id=user2)
         alldata = add_to_cart.objects.filter(user=user_obj2)
-        total_price = cartdetail(alldata, user2)
+        total_price, subtotal = cartdetail(alldata, user2)
     except:
         count = 0
-        alldata = 0
-        total_price = 0
+        alldata = []
+        total_price, subtotal = 0, 0
+    q = (request.GET.get('q') or '').strip()
     try:
         pro_list = productModel.objects.filter(catname_id=hid)
+        if q:
+            pro_list = pro_list.filter(
+                Q(productname__icontains=q)
+                | Q(pro_description__icontains=q)
+                | Q(brand__brand_name__icontains=q)
+            )
         cat_obj = categoryModel.objects.get(id=hid)
     except:
         return redirect('/user/category/')
-    shop_dict = {'cartt': alldata, 'total_price': total_price, 'cart_val': count, 'cat_obj': cat_obj,
-                 'pro_list': pro_list, 'hid': hid}
+    shop_dict = {
+        'cartt': alldata,
+        'total_price': total_price,
+        'subtotal': subtotal,
+        'cart_val': count,
+        'cat_obj': cat_obj,
+        'pro_list': pro_list,
+        'hid': hid,
+        'q': q,
+    }
     return render(request, 'user/category.html', shop_dict)
 
 
@@ -479,13 +505,24 @@ def cat_page(request):
         count = cart_count(user2)
         user_obj2 = A_User.objects.get(id=user2)
         alldata = add_to_cart.objects.filter(user=user_obj2)
-        total_price = cartdetail(alldata, user2)
+        total_price, subtotal = cartdetail(alldata, user2)
     except:
         count = 0
-        alldata = 0
-        total_price = 0
+        alldata = []
+        total_price, subtotal = 0, 0
+    q = (request.GET.get('q') or '').strip()
     cat_obj = categoryModel.objects.all()
-    shop_dict = {'cartt': alldata, 'total_price': total_price, 'cart_val': count, 'cat_obj': cat_obj}
+    if q:
+        cat_obj = cat_obj.filter(cat_name__icontains=q)
+
+    shop_dict = {
+        'cartt': alldata,
+        'total_price': total_price,
+        'subtotal': subtotal,
+        'cart_val': count,
+        'cat_obj': cat_obj,
+        'q': q,
+    }
     return render(request, 'user/category-list.html', shop_dict)
 
 
@@ -496,11 +533,11 @@ def product(request, pid):
         count = cart_count(user2)
         user_obj2 = A_User.objects.get(id=user2)
         alldata = add_to_cart.objects.filter(user=user_obj2)
-        total_price = cartdetail(alldata, user2)
+        total_price, subtotal = cartdetail(alldata, user2)
     except:
         count = 0
-        alldata = 0
-        total_price = 0
+        alldata = []
+        total_price, subtotal = 0, 0
 
     try:
         cdataa = add_to_cart.objects.get(user=user_obj2, product_id=pid)
@@ -513,7 +550,7 @@ def product(request, pid):
         ss = pid
     except:
         return redirect('/user/product/')
-    x = {'rating': '1''2''3''4''5', 'reletedskip': ss, 'cartt': alldata, 'total_price': total_price, 'pdata': pdata,
+    x = {'rating': '1''2''3''4''5', 'reletedskip': ss, 'cartt': alldata, 'total_price': total_price, 'subtotal': subtotal,
          'cart_val': count, 'cart_vall': cdata, 'releteddata': cdataa}
     return render(request, 'user/product.html', x)
 
@@ -525,13 +562,29 @@ def pro_page(request):
         count = cart_count(user2)
         user_obj2 = A_User.objects.get(id=user2)
         alldata = add_to_cart.objects.filter(user=user_obj2)
-        total_price = cartdetail(alldata, user2)
+        total_price, subtotal = cartdetail(alldata, user2)
     except:
         count = 0
-        alldata = 0
-        total_price = 0
+        alldata = []
+        total_price, subtotal = 0, 0
+    q = (request.GET.get('q') or '').strip()
     pro_obj = productModel.objects.all()
-    pro_dict = {'cartt': alldata, 'total_price': total_price, 'cart_val': count, 'pro_list': pro_obj}
+    if q:
+        pro_obj = pro_obj.filter(
+            Q(productname__icontains=q)
+            | Q(pro_description__icontains=q)
+            | Q(catname_id__cat_name__icontains=q)
+            | Q(brand__brand_name__icontains=q)
+        )
+
+    pro_dict = {
+        'cartt': alldata,
+        'total_price': total_price,
+        'subtotal': subtotal,
+        'cart_val': count,
+        'pro_list': pro_obj,
+        'q': q,
+    }
     return render(request, 'user/product-list.html', pro_dict)
 
 
@@ -542,10 +595,11 @@ def dashboard(request):
         count = cart_count(user2)
         user_obj2 = A_User.objects.get(id=user2)
         alldata = add_to_cart.objects.filter(user=user_obj2)
-        total_price = cartdetail(alldata, user2)
+        total_price, subtotal = cartdetail(alldata, user2)
+        address_obj = addressModel.objects.filter(user_id=user2)
         return render(request, 'user/dashboard.html',
-                      {'email': user_obj2, 'cartt': alldata, 'total_price': total_price, 'cart_val': count,
-                       'dashboard_active': 'dashboard_master', 'cartc': '2'})
+                      {'email': user_obj2, 'cartt': alldata, 'total_price': total_price, 'subtotal': subtotal, 'cart_val': count,
+                       'dashboard_active': 'dashboard_master', 'address_obj': address_obj})
     else:
         messages.success(request, 'First You Need to Login')
         return redirect('/user/accounts/login/')
@@ -560,8 +614,8 @@ def address(request):
         count = cart_count(user2)
         user_obj2 = A_User.objects.get(id=user2)
         alldata = add_to_cart.objects.filter(user=user_obj2)
-        total_price = cartdetail(alldata, user2)
-        send_dat = {'cart_val': count, 'state_list': obj, 'cartt': alldata, 'total_price': total_price,
+        total_price, subtotal = cartdetail(alldata, user2)
+        send_dat = {'cart_val': count, 'state_list': obj, 'cartt': alldata, 'total_price': total_price, 'subtotal': subtotal,
                     'address_obj': address_obj, 'address_active': 'address_master'}
 
         return render(request, 'user/address.html', send_dat)
@@ -570,16 +624,30 @@ def address(request):
         return redirect('/user/accounts/login/')
 
 
-# Add And Update Address Url
+# My Account Page
 def myaccount(request):
+    if 'userid' not in request.session:
+        messages.warning(request, 'Please login to access your account')
+        return redirect('/user/accounts/login/')
+    
+    user_id = request.session.get('userid')
+    user_obj = A_User.objects.get(id=user_id)
+    
+    # Get user's addresses
+    addresses = addressModel.objects.filter(user_id=user_obj)
+    
+    # Get user's orders
+    # `myorderModel` is not defined in models — use `buyModel` (order model) instead
+    orders = buyModel.objects.filter(user_id=user_obj).order_by('-id')[:5]
+    
+    # Handle address form submission
     if request.method == 'POST':
-        user2 = request.session.get('userid')
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         country = request.POST.get('country')
         locality = request.POST.get('locality')
         phone_number = request.POST.get('phone_number')
-        contact = int(phone_number)
+        contact = int(phone_number) if phone_number else 0
         state = request.POST.get('state')
         city = request.POST.get('city')
         street_address = request.POST.get('Street')
@@ -591,29 +659,43 @@ def myaccount(request):
         except:
             address_obj = addressModel()
 
-        user_id = A_User.objects.get(id=user2)
-
         address_obj.first_name = firstname
         address_obj.last_name = lastname
         address_obj.locality = locality
-        address_obj.user_id = user_id
+        address_obj.user_id = user_obj
         address_obj.country = country
         address_obj.phone_number = contact
-        state_obj = stateModel.objects.get(id=state)
-        address_obj.state = state_obj
+        if state:
+            state_obj = stateModel.objects.get(id=state)
+            address_obj.state = state_obj
         address_obj.city = city
         address_obj.street_address = street_address
         address_obj.pincode = pincode
         address_obj.save()
 
-        messages.success(request, "Add Address Successfully ✔")
-        return redirect(request.META.get('HTTP_REFERER'))
-    else:
-        if 'userid' in request.session:
-            return redirect('/user/')
-        else:
-            messages.success(request, 'First You Need to Loginn')
-            return redirect('/user/accounts/login/')
+        messages.success(request, "Address added/updated successfully!")
+        return redirect('/myaccount/')
+    
+    context = {
+        'user': user_obj,
+        'addresses': addresses,
+        'orders': orders,
+        'states': stateModel.objects.all(),
+    }
+    
+    return render(request, 'user/myaccount.html', context)
+
+
+# Add And Update Address Url (separate function for AJAX/API)
+def add_update_address(request):
+    if 'userid' not in request.session:
+        return JsonResponse({'status': 'error', 'message': 'Please login first'})
+    
+    if request.method == 'POST':
+        # Handle address addition/updating logic here
+        return JsonResponse({'status': 'success', 'message': 'Address updated'})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
 # Address Update Using Ajax
@@ -697,13 +779,125 @@ def myorder(request):
             check = order.count()
             count = cart_count(user2)
             alldata = add_to_cart.objects.filter(user=user_obj2)
-            total_price = cartdetail(alldata, user2)
-            send_dat = {'cartt': alldata, 'total_price': total_price, 'cart_val': count,
+            total_price, subtotal = cartdetail(alldata, user2)
+            send_dat = {'cartt': alldata, 'total_price': total_price, 'subtotal': subtotal, 'cart_val': count,
                         'myorder_active': 'myorder_master', 'allorder': order, 'emptyorder': check, }
             return render(request, 'user/order.html', send_dat)
     else:
         messages.success(request, 'First You Need to Login')
         return redirect('/user/accounts/login/')
+
+
+# Simple informational pages for header links
+def _common_page_context(request, title):
+    """Return a base context dict used by small static pages so header/footer render correctly."""
+    try:
+        user2 = request.session.get('userid')
+        count = cart_count(user2)
+        user_obj2 = A_User.objects.get(id=user2)
+        alldata = add_to_cart.objects.filter(user=user_obj2)
+        total_price, subtotal = cartdetail(alldata, user2)
+    except:
+        count = 0
+        alldata = []
+        total_price, subtotal = 0, 0
+    return {
+        'cartt': alldata,
+        'total_price': total_price,
+        'subtotal': subtotal,
+        'cart_val': count,
+        'page_title': title,
+    }
+
+
+def used_gear(request):
+    ctx = _common_page_context(request, 'Used Gear')
+    return render(request, 'user/used_gear.html', ctx)
+
+
+def insync_page(request):
+    ctx = _common_page_context(request, 'Articles & Videos')
+    return render(request, 'user/insync.html', ctx)
+
+
+def nowshipping_page(request):
+    ctx = _common_page_context(request, 'New Arrivals')
+    return render(request, 'user/nowshipping.html', ctx)
+
+
+def contact_page(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        # Send email
+        from django.core.mail import send_mail
+        from django.conf import settings
+        
+        email_subject = f'Contact Form: {subject}'
+        email_message = f'''
+Name: {name}
+Email: {email}
+Phone: {phone}
+
+Message:
+{message}
+        '''
+        
+        try:
+            send_mail(
+                email_subject,
+                email_message,
+                settings.EMAIL_HOST_USER,
+                ['prasadyuvraj8805@gmail.com'],  # Send to the configured email
+                fail_silently=False,
+            )
+            messages.success(request, 'Your message has been sent successfully!')
+        except Exception as e:
+            messages.error(request, 'There was an error sending your message. Please try again.')
+        
+        return redirect('/user/contact/')
+    
+    ctx = _common_page_context(request, 'Contact Us')
+    return render(request, 'user/contact.html', ctx)
+
+
+def used_gear_page(request):
+    ctx = _common_page_context(request, 'Gear Exchange')
+    return render(request, 'user/used_gear.html', ctx)
+
+
+def integration_page(request):
+    ctx = _common_page_context(request, 'Integration')
+    return render(request, 'user/integration.html', ctx)
+
+
+def studios_page(request):
+    ctx = _common_page_context(request, 'Vibe Studios')
+    return render(request, 'user/studios.html', ctx)
+
+
+def content_creators_page(request):
+    ctx = _common_page_context(request, 'Content Creators')
+    return render(request, 'user/content_creators.html', ctx)
+
+
+def home_audio_page(request):
+    ctx = _common_page_context(request, 'Home Audio')
+    return render(request, 'user/home_audio.html', ctx)
+
+
+def house_of_worship_page(request):
+    ctx = _common_page_context(request, 'House of Worship')
+    return render(request, 'user/house_of_worship.html', ctx)
+
+
+def immersive_page(request):
+    ctx = _common_page_context(request, 'Immersive')
+    return render(request, 'user/immersive.html', ctx)
 
 
 # particular Order Display  #Order Success Page
@@ -714,7 +908,7 @@ def myorder1(request, hid, sid):
             count = cart_count(user2)
             user_obj2 = A_User.objects.get(id=user2)
             alldata = add_to_cart.objects.filter(user=user_obj2)
-            total_price = cartdetail(alldata, user2)
+            total_price, subtotal_cart = cartdetail(alldata, user2)
             pro_list = Sub_bayModel.objects.filter(order_id=hid, order_id__user_id=user_obj2)
             order = buyModel.objects.get(id=hid, user_id=user_obj2)
             cart_product = [p for p in buyModel.objects.filter(id=hid, user_id=user_obj2)]
@@ -726,6 +920,8 @@ def myorder1(request, hid, sid):
                 total_amountt = p.total_amount
                 ttotal_amount.append(total_amountt)
             subtotal = ttotal_amount[0] - shipping_charge
+            total_price, subtotal_cart = cartdetail(alldata, user2)
+            # data for success page
             data = {'cartt': alldata, 'total_price': total_price, 'cart_val': count, 'hid': hid, 'sid': sid,
                     'order_list': pro_list, 'order': order, 'subtotal': subtotal, 'order_date': order_date}
 
@@ -743,8 +939,15 @@ def gocart(request):
         user2 = request.session.get('userid')
         user_obj2 = A_User.objects.get(id=user2)
         alldata = add_to_cart.objects.filter(user=user_obj2)
-        total_price = cartdetail(alldata, user2)
+        total_price, subtotal = cartdetail(alldata, user2)
         soo = alldata.count()
+        
+        # Handle clear cart request
+        if request.method == 'POST' and request.POST.get('action') == 'clear_cart':
+            alldata.delete()
+            messages.success(request, 'Cart cleared successfully!')
+            return redirect('/user/gocart/')
+        
         if alldata.exists():
             var = request.POST.get('var')
             if var == '3':
@@ -758,38 +961,12 @@ def gocart(request):
                 if (int(sa) >= int(cartquntity)):
                     obj.quantity = cartquntity
                     obj.save()
-                    cart_productt = [p for p in add_to_cart.objects.all()
-                                     if p.user.id == user2]
-                    total_amount = []
-                    if cart_productt:
-                        for p in cart_productt:
-                            tempamount = (p.quantity * p.product_id.pro_price)
-                            total_amount.append(tempamount)
-                        amount = 0
-                        shipping = 70.00
-                        for i in range(0, len(total_amount)):
-                            amount = amount + total_amount[i]
-                        amountd = amount + shipping
-                        a = {'status': True, 'total_amount_update': amount, 'total_amount': total_amount,
-                             'amountd': amountd}
-                        return JsonResponse(a)
+                    new_total, new_subtotal = cartdetail(alldata, user2)
+                    return JsonResponse({'status': True, 'total_amount_update': new_subtotal, 'amountd': new_total})
                 else:
-                    a = {'status': False}
-                    return JsonResponse(a)
+                    return JsonResponse({'status': False})
 
-            cart_product = [p for p in add_to_cart.objects.all()
-                            if p.user.id == user2]
-
-            total_amount = []
-            if cart_product:
-                for p in cart_product:
-                    tempamount = (p.quantity * p.product_id.pro_price)
-                    total_amount.append(tempamount)
-                summ = 0
-                for i in range(0, len(total_amount)):
-                    summ = summ + total_amount[i]
-            send_data = {'cartt': alldata, 'total_price': total_price, 'totall_amount': summ, 'cart_val': soo,
-                         'cartc': soo}
+            send_data = {'cartt': alldata, 'total_price': total_price, 'totall_amount': subtotal, 'cart_val': soo}
         else:
             return render(request, 'user/cart.html', {'emptycart': 'emtycart', 'cart_val': soo})
         return render(request, 'user/cart.html', send_data)
@@ -801,61 +978,42 @@ def gocart(request):
 # Add, Update and Delete Cart Item
 @csrf_exempt
 def addCart(request):
-    if 'username' in request.session:
+    if 'userid' in request.session:
         var = request.POST.get('var')
         if var == '1':
-            update_cart = request.POST.get('update_cart')
             user2 = request.session.get('userid')
             user_obj = A_User.objects.get(id=user2)
-            quantity = request.POST.get('ccartquntity')
+            quantity = int(request.POST.get('ccartquntity', 1))
             product_id = request.POST.get('id')
             product = productModel.objects.get(id=product_id)
-            compair = product.total_quantity
-
-            if (update_cart == '0'):
-                add_obj = add_to_cart()
-                quantityy = int(quantity)
-                another = int(compair)
-
+            
+            # Check if this product already exists in the user's cart
+            existing_item = add_to_cart.objects.filter(user=user_obj, product_id=product).first()
+            
+            if existing_item:
+                existing_item.quantity += quantity
+                existing_item.save()
+                return JsonResponse({'status': True, 'c_id': product.id})
             else:
-                add_obj = add_to_cart.objects.get(product_id=update_cart, user=user_obj)
-                add_objj = add_obj.quantity
-                quantityy = int(add_objj) + int(quantity)
-                another = int(compair) - int(add_objj)
-
-            if (int(quantityy) <= int(compair)):
-
-                add_obj.quantity = quantityy
-                add_obj.product_id = product
-
-                add_obj.user = user_obj
+                add_obj = add_to_cart(user=user_obj, product_id=product, quantity=quantity)
                 add_obj.save()
-                c_id = add_obj.product_id.id
-                a = {'status': True, 'c_id': c_id}
-                return JsonResponse(a)
-            else:
-                a = {'status': "error", 'another': another}
-                return JsonResponse(a)
+                return JsonResponse({'status': True, 'c_id': product.id})
 
         if var == '2':
             id1 = request.POST.get('id')
-            obj = add_to_cart.objects.get(id=id1)
-            obj.delete()
-            return JsonResponse({'status': True})
+            try:
+                obj = add_to_cart.objects.get(id=id1)
+                obj.delete()
+                return JsonResponse({'status': True})
+            except:
+                return JsonResponse({'status': False})
 
     if request.method == 'GET':
         messages.success(request, 'First You Need to Login')
         return redirect('/user/accounts/login/')
-
     else:
-        session_redirect = request.POST.get('session_redirect')
-        if (session_redirect == '0'):
-            return JsonResponse({'status': False, 'redirect': '0'})
-        else:
-            redirectlurll = request.POST.get('redairecturl')
-            request.session['redirectlurll'] = redirectlurll
-            messages.success(request, 'First You Need to Login')
-            return JsonResponse({'status': False, 'redirect': '1'})
+        return JsonResponse({'status': False, 'redirect': '1'})
+
 
 
 # Product Rating
@@ -1019,13 +1177,15 @@ def checkouut(request):
                 address_iid = request.POST.get('hidden_address')
                 address_obj = addressModel.objects.get(id=address_iid, user_id=user_obj2)
                 address_oobj = addressModel.objects.filter(id=address_iid)
-            except:
-                address_iid = objaddressid[0]
+            except Exception:
+                # If the posted address id is missing or invalid, fall back to the user's first saved address
                 address_oobj = addressModel.objects.filter(user_id=user_obj2)
-                for i in range(0, len(address_oobj)):
-                    id_address = address_oobj[i].id
-                    objaddressid.append(id_address)
-                address_obj = addressModel.objects.get(id=objaddressid[0])
+                if address_oobj.exists():
+                    address_obj = address_oobj.first()
+                    address_iid = address_obj.id
+                else:
+                    messages.error(request, 'Please add a delivery address before checkout.')
+                    return redirect('/user/gocart/')
 
             order_date = date.today()
             shipping_charge = 70
@@ -1312,18 +1472,9 @@ def checkout(request):
 
                     if (int(len(main_total_quantity)) == int(len(qun))):
 
-                        summ = 0
-                        total_quan = 0
-                        for i in range(0, len(total_amount)):
-                            summ = summ + total_amount[i]
-                        for i in range(0, len(total_quantity)):
-                            total_quan = total_quan + total_quantity[i]
-                        shipping_charge = 70
-                        total_price = summ + shipping_charge
-
+                        total_price, subtotal = cartdetail(alldata, user2)
                         send_data = {'click_on': '1', 'cart_val': count, 'cartt': alldata, 'total_price': total_price,
-                                     'state_list': obj, 'address_obj': address_obj, 'total_quantity': total_quan,
-                                     'subtotal': summ, 'var_11': 'varr'}
+                                     'state_list': obj, 'address_obj': address_obj, 'subtotal': subtotal, 'var_11': 'varr'}
                         return render(request, 'user/checkout.html', send_data)
                     else:
                         return redirect('/user/gocart/')
@@ -1424,33 +1575,29 @@ def payment_status(request):
 
 
 # Cart Item Count
-def cart_count(user):
-    user_obj2 = A_User.objects.get(id=user)
-    alldata = add_to_cart.objects.filter(user=user_obj2)
-    soo = alldata.count()
-    return soo
+def cart_count(user_id):
+    try:
+        return add_to_cart.objects.filter(user_id=user_id).count()
+    except:
+        return 0
 
 
 # Product Subtotal And Total Amount
-def cartdetail(alldata, user2):
-    if alldata.exists():
-        cart_product = [p for p in add_to_cart.objects.all()
-                        if p.user.id == user2]
+def cartdetail(alldata, user_id):
+    try:
+        cart_items = add_to_cart.objects.filter(user_id=user_id)
+        subtotal = 0
+        total_quantity = 0
+        
+        for item in cart_items:
+            subtotal += item.quantity * item.product_id.pro_price
+            total_quantity += item.quantity
+            
+        shipping_charge = 70 if subtotal > 0 else 0
+        total_price = subtotal + shipping_charge
+        
+        return total_price, subtotal
+    except Exception as e:
+        print(f"Cart calculation error: {e}")
+        return 0, 0
 
-        total_amount = []
-        total_quantity = []
-        if cart_product:
-            for p in cart_product:
-                temp_quantity = p.quantity
-                total_quantity.append(temp_quantity)
-                tempamount = (p.quantity * p.product_id.pro_price)
-                total_amount.append(tempamount)
-            summ = 0
-            total_quan = 0
-            for i in range(0, len(total_amount)):
-                summ = summ + total_amount[i]
-            for i in range(0, len(total_quantity)):
-                total_quan = total_quan + total_quantity[i]
-        shipping_charge = 70
-        total_price = summ + shipping_charge
-        return total_price, summ

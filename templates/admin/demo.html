@@ -12,16 +12,16 @@
     <link rel="shortcut icon" href="{% static 'admin/folder/images/logo-mini-music-club.png' %}">
     <link rel="icon" href="{% static 'admin/folder/images/logo-mini-music-club.png' %}" type="image/x-icon">
     
-    <title>Music Club | {% block title %} {% endblock %}</title>
+    <title>Vibe Music | {% block title %} {% endblock %}</title>
     
     <meta name="description" content="Discover a harmonious shopping experience for music instruments in our E-Commerce store."/>
-    <meta name="author" content="Prathmesh Soni"/>
-    <meta property="og:title" content="Prathmesh Soni"/>
-    <meta property="og:site_name" content="Prathmesh Soni Music Club Website"/>
+    <meta name="author" content="Vibe Music"/>
+    <meta property="og:title" content="Vibe Music"/>
+    <meta property="og:site_name" content="Vibe Music Website"/>
     <meta property="og:url" content=""/>
     <meta property="og:description" content="Discover a harmonious shopping experience for music instruments in our E-Commerce store.">
     <meta property="og:type" content="website"/>
-    <meta property="og:image" content="https://music-club.prathmeshsoni.works/static/admin/folder/images/pretty-snap-25-09-2023.png"/>
+    <meta property="og:image" content="https://vibemusic.in/static/admin/folder/images/pretty-snap-25-09-2023.png"/>
 
     <script src="https://use.fontawesome.com/c0fc7bc651.js"></script>
     
@@ -61,7 +61,7 @@
 					         <div class="col-md-8 display-block mx-auto display-flex h-100"
                                 style=" justify-content: center; display: flex; align-items: center;">
 					             <a href="/" >
-                                    <img class="width-255" src="{% static 'admin/folder/images/logo-music-club.png' %}" alt="">
+                                    <img class="width-255" src="{% static 'admin/folder/images/logo-vibemusic.svg' %}" alt="">
                                 </a>
                             </div>
 
@@ -290,7 +290,7 @@
 <script>
     window.onload = function exampleFunction(){
         var password = window.location.href
-        if ( password == 'https://music-club.prathmeshsoni.works/admin/password-reset/' || password =='https://music-club.prathmeshsoni.works/admin/password-reset-confirm/MTY/set-password/' || password == 'https://music-club.prathmeshsoni.works/admin/password-reset/done/' || password == 'https://music-club.prathmeshsoni.works/admin/password-reset-complete/' ){
+        if (password.includes('/admin/password-reset/')){
             window.location.href = '/admin/';
         }
         else{

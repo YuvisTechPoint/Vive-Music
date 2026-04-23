@@ -1,11 +1,11 @@
 <p id="top" align="center">
-  <a href="https://music-club.mrsoni.in" target="_blank">
-    <img src="static/admin/folder/images/logo-music-club.png" alt="Logo" width="300" height="100">
+    <a href="https://music-club.mrsoni.in" target="_blank">
+    <img src="static/admin/folder/images/logo-vibe-music.png" alt="Logo" width="300" height="100">
   </a>
 </p>
 
 <h1 align="center" class="dotted">
-    <a href="https://music-club.mrsoni.in" target="_blank">Music Club eCommerce</a>
+    <a href="https://music-club.mrsoni.in" target="_blank">Vibe Music eCommerce</a>
 </h1>
 
 <br>
@@ -208,7 +208,7 @@ Documentation: <a href="https://razorpay.com/docs/payments/server-integration/py
 
 ## Screenshots
 
-Visit our <a href="https://private-app.mrsoni.in/view/113" target="_blank"> Screenshots Page </a> for a visual walkthrough of the Music Club E-Commerce Website.
+Visit our <a href="https://private-app.mrsoni.in/view/113" target="_blank"> Screenshots Page </a> for a visual walkthrough of the Vibe Music E-Commerce Website.
 
 Demo Video 👇:
 
@@ -244,4 +244,4 @@ The repository is a starting point for most of my professional projects; for thi
 
 
 ---
-**<a href="https://music-club.mrsoni.in" target="_blank">Music Club</a> eCommerce** - Provided by **<a href="https://soniprathmesh.com" target="_blank">Prathmesh Soni</a>**
+**<a href="https://music-club.mrsoni.in" target="_blank">Vibe Music</a> eCommerce** - Provided by **<a href="https://soniprathmesh.com" target="_blank">Prathmesh Soni</a>**
