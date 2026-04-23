@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "music_club/asgi_vercel.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/media/(.*)",
+      "dest": "/media/$1"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/uploads/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "music_club/asgi_vercel.py"
+    }
+  ],
+  "env": {
+    "DJANGO_SETTINGS_MODULE": "music_club.settings"
+  },
+  "functions": {
+    "music_club/asgi_vercel.py": {
+      "runtime": "python3.9"
+    }
+  }
+}
