@@ -2,6 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
+from Admin.category.models import categoryModel
 from Admin.product.models import productModel
 from User.models import add_to_cart, A_User
 from datetime import datetime, timedelta
@@ -212,10 +213,9 @@ class OrderTrackingConsumer(AsyncWebsocketConsumer):
             return 100 if current > 0 else 0
         return round(((current - previous) / previous) * 100, 2)
 
-    @database_sync_to_async
-    def update_order_status(self, order_id, status):
+    async def update_order_status(self, order_id, status):
         try:
-            order = add_to_cart.objects.get(id=order_id)
+            order = await database_sync_to_async(add_to_cart.objects.get)(id=order_id)
             # In a real implementation, you'd update the order status
             # order.status = status
             # order.save()
@@ -280,8 +280,7 @@ class UserActivityConsumer(AsyncWebsocketConsumer):
             'data': event['data']
         }))
 
-    @database_sync_to_async
-    def get_user_activity(self):
+    async def get_user_activity(self):
         now = datetime.now()
         
         # Recent user registrations
@@ -404,8 +403,7 @@ class SalesAnalyticsConsumer(AsyncWebsocketConsumer):
             'data': event['data']
         }))
 
-    @database_sync_to_async
-    def get_sales_analytics(self):
+    async def get_sales_analytics(self):
         now = datetime.now()
         
         # Daily sales for last 30 days
@@ -423,8 +421,6 @@ class SalesAnalyticsConsumer(AsyncWebsocketConsumer):
         
         # Category performance
         category_performance = []
-        from Admin.category.models import categoryModel
-        
         for category in categoryModel.objects.all():
             category_orders = add_to_cart.objects.filter(product_id__catname_id=category)
             revenue = category_orders.aggregate(total=Sum('product_id__pro_price'))['total'] or Decimal('0')
@@ -540,8 +536,7 @@ class ProductManagementConsumer(AsyncWebsocketConsumer):
             'data': event['data']
         }))
 
-    @database_sync_to_async
-    def get_product_statistics(self):
+    async def get_product_statistics(self):
         from django.db.models import Count, Sum, Q
         from datetime import datetime, timedelta
         
@@ -596,8 +591,7 @@ class ProductManagementConsumer(AsyncWebsocketConsumer):
             'last_updated': now.isoformat()
         }
 
-    @database_sync_to_async
-    def search_products(self, query):
+    async def search_products(self, query):
         products = productModel.objects.filter(
             Q(productname__icontains=query) |
             Q(pro_description__icontains=query) |
@@ -619,8 +613,7 @@ class ProductManagementConsumer(AsyncWebsocketConsumer):
             ]
         }))
 
-    @database_sync_to_async
-    def filter_by_category(self, category_id):
+    async def filter_by_category(self, category_id):
         products = productModel.objects.filter(catname_id_id=category_id).select_related('catname_id', 'brand')[:20]
         
         await self.send(text_data=json.dumps({
