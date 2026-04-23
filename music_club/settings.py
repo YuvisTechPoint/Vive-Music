@@ -172,8 +172,38 @@ if os.environ.get('VERCEL'):
     SECURE_REDIRECT_EXEMPT = []
     
     # Fix session cookie domain
-    SESSION_COOKIE_DOMAIN = '.vercel.app'
-    CSRF_COOKIE_DOMAIN = '.vercel.app'
+    SESSION_COOKIE_DOMAIN = None  # Let Vercel handle this
+    CSRF_COOKIE_DOMAIN = None     # Let Vercel handle this
+    
+    # Database configuration for Vercel
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+        )
+    }
+    
+    # Media files configuration for Vercel
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    
+    # Static files for Vercel
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    
+    # Logging for debugging
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
