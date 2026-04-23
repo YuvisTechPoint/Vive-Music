@@ -28,14 +28,6 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1', 'yes']
 
 ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '.vercel.app']
 
-# CSRF trusted origins for deployment
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'https://vibemusic-sandy.vercel.app',
-    'https://*.vercel.app'
-]
-
 # Application definition
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
@@ -131,14 +123,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
-USE_L10N = True
-
 USE_TZ = True
+
+# Session Configuration
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_SAVE_EVERY_REQUEST = True
+
+# CSRF Configuration
+CSRF_COOKIE_AGE = 86400  # 24 hours
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -155,76 +150,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 # Vercel specific settings
 if os.environ.get('VERCEL'):
     DEBUG = False
-    
-    # Disable SSL redirect for Vercel (handled by Vercel)
+    # Don't force SSL redirect on Vercel as it handles HTTPS automatically
     SECURE_SSL_REDIRECT = False
+    # Allow cookies to work over HTTP for local testing and HTTPS for production
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
-    
-    # Disable HSTS for Vercel
+    # Allow same-site requests
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    # Add the domain to CSRF trusted origins
+    CSRF_TRUSTED_ORIGINS = [
+        'https://vibemusic-sandy.vercel.app',
+        'https://*.vercel.app'
+    ]
+    # Don't enforce HSTS on Vercel
     SECURE_HSTS_SECONDS = 0
     SECURE_HSTS_INCLUDE_SUBDOMAINS = False
     SECURE_HSTS_PRELOAD = False
-    
-    # Fix for Vercel deployment
-    CSRF_TRUSTED_ORIGINS = [
-        'https://vibemusic-sandy.vercel.app',
-        'https://*.vercel.app',
-        'http://localhost:8000',
-        'http://127.0.0.1:8000'
-    ]
-    
-    # Allow redirects to work properly
-    SECURE_REDIRECT_EXEMPT = ['*']
-    
-    # Fix session cookie domain
-    SESSION_COOKIE_DOMAIN = None
-    CSRF_COOKIE_DOMAIN = None
-    
-    # Database configuration for Vercel
-    try:
-        import dj_database_url
-        DATABASES = {
-            'default': dj_database_url.config(
-                default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
-            )
-        }
-    except ImportError:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-    
-    # Media files configuration for Vercel
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-    
-    # Static files for Vercel
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    
-    # Logging for debugging
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'console': {
-                'class': 'logging.StreamHandler',
-            },
-        },
-        'root': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
-        'loggers': {
-            'django': {
-                'handlers': ['console'],
-                'level': 'INFO',
-                'propagate': False,
-            },
-        },
-    }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
