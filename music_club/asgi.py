@@ -11,15 +11,21 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from Admin.realtime.routing import websocket_urlpatterns
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'music_club.settings')
 
-application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            websocket_urlpatterns
-        )
-    ),
-})
+if os.environ.get('VERCEL'):
+    # Vercel only needs the HTTP app for Django pages; keep the websocket
+    # routing stack out of the deployment bootstrap.
+    application = get_asgi_application()
+else:
+    from Admin.realtime.routing import websocket_urlpatterns
+
+    application = ProtocolTypeRouter({
+        "http": get_asgi_application(),
+        "websocket": AuthMiddlewareStack(
+            URLRouter(
+                websocket_urlpatterns
+            )
+        ),
+    })
