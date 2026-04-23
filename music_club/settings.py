@@ -155,33 +155,47 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 # Vercel specific settings
 if os.environ.get('VERCEL'):
     DEBUG = False
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+    
+    # Disable SSL redirect for Vercel (handled by Vercel)
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    
+    # Disable HSTS for Vercel
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
     
     # Fix for Vercel deployment
     CSRF_TRUSTED_ORIGINS = [
         'https://vibemusic-sandy.vercel.app',
-        'https://*.vercel.app'
+        'https://*.vercel.app',
+        'http://localhost:8000',
+        'http://127.0.0.1:8000'
     ]
     
     # Allow redirects to work properly
-    SECURE_REDIRECT_EXEMPT = []
+    SECURE_REDIRECT_EXEMPT = ['*']
     
     # Fix session cookie domain
-    SESSION_COOKIE_DOMAIN = None  # Let Vercel handle this
-    CSRF_COOKIE_DOMAIN = None     # Let Vercel handle this
+    SESSION_COOKIE_DOMAIN = None
+    CSRF_COOKIE_DOMAIN = None
     
     # Database configuration for Vercel
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(
-            default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
-        )
-    }
+    try:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(
+                default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+            )
+        }
+    except ImportError:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
     
     # Media files configuration for Vercel
     MEDIA_URL = '/media/'
@@ -202,6 +216,13 @@ if os.environ.get('VERCEL'):
         'root': {
             'handlers': ['console'],
             'level': 'INFO',
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
+            },
         },
     }
 
