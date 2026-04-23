@@ -168,6 +168,7 @@ if os.environ.get('VERCEL'):
     # Allow cookies to work over HTTP for local testing and HTTPS for production
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
+    WHITENOISE_USE_FINDERS = True
     # Allow same-site requests
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'
