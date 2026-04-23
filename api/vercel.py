@@ -11,12 +11,12 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'music_club.settings')
 
 # Import Django
 import django
+from django.core.wsgi import get_wsgi_application
+
 django.setup()
 
-# Get the WSGI application
-from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
-# Vercel handler
-def handler(request):
-    return application(request)
+# Export a real WSGI app for Vercel.
+app = application
+handler = application
