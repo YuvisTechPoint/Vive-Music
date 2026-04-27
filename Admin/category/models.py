@@ -9,7 +9,8 @@ class categoryModel(models.Model):
 
     def delete(self, *args, **kwargs):
         # Delete the image file when the product is deleted
-        os.remove(self.cat_img.path)
+        if self.cat_img and os.path.exists(self.cat_img.path):
+            os.remove(self.cat_img.path)
         super(categoryModel, self).delete(*args, **kwargs)
 
     def __str__(self):

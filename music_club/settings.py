@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'Admin.filter',
     'Admin.address_master',
     'Admin.realtime',
+    'crispy_bootstrap4',
     'crispy_forms',
 ]
 
@@ -156,6 +157,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+WHITENOISE_USE_FINDERS = True
 
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
@@ -168,7 +170,6 @@ if os.environ.get('VERCEL'):
     # Allow cookies to work over HTTP for local testing and HTTPS for production
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
-    WHITENOISE_USE_FINDERS = True
     # Allow same-site requests
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'

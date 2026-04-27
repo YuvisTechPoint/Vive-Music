@@ -46,7 +46,7 @@ class productModel(models.Model):
         # Delete the image file when the product is deleted
         for field in ['pro_image', 'pro_back_image', 'feature_image']:
             file = getattr(self, field)
-            if file:
+            if file and os.path.exists(file.path):
                 os.remove(file.path)
         super(productModel, self).delete(*args, **kwargs)
 

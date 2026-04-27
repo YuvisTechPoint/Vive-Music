@@ -1,6 +1,6 @@
 {% load static %}
 
-<html lang="en" style="display: none;" id="main-html">
+<html lang="en" id="main-html">
 
     <head>
         <meta charset="utf-8">
@@ -287,9 +287,81 @@
               </section>
             </aside>
 
-            {% block content %}
+            <div class="content-wrapper" style="min-height: calc(100vh - 120px); background: linear-gradient(180deg, #f8fbfd 0%, #eef4f8 100%);">
+              <section class="content-header" style="padding: 28px 30px 0;">
+                <div class="d-flex align-items-center justify-content-between flex-wrap" style="gap: 16px;">
+                  <div>
+                    <h1 style="margin: 0; font-size: 30px; font-weight: 800; color: #102a43;">Admin Dashboard</h1>
+                    <p style="margin: 8px 0 0; color: #627d98;">Manage catalog, orders, and live operations from one place.</p>
+                  </div>
+                  <div>
+                    <a href="/admin/product-management/" class="btn btn-primary" style="background: #0d74a6; border-color: #0d74a6; padding: 10px 16px; border-radius: 8px; font-weight: 700;">Open Product Management</a>
+                  </div>
+                </div>
+              </section>
 
-            {% endblock %}
+              <section class="content" style="padding: 24px 30px 30px;">
+                {% block content %}
+                <div class="row">
+                  <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="vibe-card p-4 h-100" style="background: #ffffff;">
+                      <div style="font-size: 13px; color: #627d98; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Products</div>
+                      <div style="font-size: 34px; font-weight: 800; color: #102a43; margin-top: 10px;">{{ total_products|default:0 }}</div>
+                      <div style="margin-top: 8px; color: #0d74a6; font-weight: 600;">Catalog items</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="vibe-card p-4 h-100" style="background: #ffffff;">
+                      <div style="font-size: 13px; color: #627d98; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Categories</div>
+                      <div style="font-size: 34px; font-weight: 800; color: #102a43; margin-top: 10px;">{{ total_categories|default:0 }}</div>
+                      <div style="margin-top: 8px; color: #0d74a6; font-weight: 600;">Active groupings</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="vibe-card p-4 h-100" style="background: #ffffff;">
+                      <div style="font-size: 13px; color: #627d98; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Brands</div>
+                      <div style="font-size: 34px; font-weight: 800; color: #102a43; margin-top: 10px;">{{ total_brands|default:0 }}</div>
+                      <div style="margin-top: 8px; color: #0d74a6; font-weight: 600;">Vendor labels</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="vibe-card p-4 h-100" style="background: #ffffff;">
+                      <div style="font-size: 13px; color: #627d98; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Orders</div>
+                      <div style="font-size: 34px; font-weight: 800; color: #102a43; margin-top: 10px;">{{ total_orders|default:0 }}</div>
+                      <div style="margin-top: 8px; color: #0d74a6; font-weight: 600;">Placed carts</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-8 mb-4">
+                    <div class="vibe-card p-4" style="background: #ffffff; min-height: 260px;">
+                      <h4 style="margin-top: 0; font-weight: 800; color: #102a43;">Quick Actions</h4>
+                      <div class="row" style="margin-top: 20px; gap: 12px;">
+                        <a href="/admin/category/" class="btn btn-outline-primary" style="border-color: #0d74a6; color: #0d74a6; font-weight: 700;">Manage Categories</a>
+                        <a href="/admin/brand/" class="btn btn-outline-primary" style="border-color: #0d74a6; color: #0d74a6; font-weight: 700;">Manage Brands</a>
+                        <a href="/admin/product/" class="btn btn-outline-primary" style="border-color: #0d74a6; color: #0d74a6; font-weight: 700;">Manage Products</a>
+                        <a href="/admin/order/" class="btn btn-outline-primary" style="border-color: #0d74a6; color: #0d74a6; font-weight: 700;">Review Orders</a>
+                      </div>
+                      <p style="margin-top: 22px; color: #627d98; line-height: 1.7; max-width: 720px;">
+                        This dashboard now opens with an active control panel instead of a blank canvas, so the admin area stays usable even if optional scripts are slow or blocked.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 mb-4">
+                    <div class="vibe-card p-4 h-100" style="background: linear-gradient(180deg, #0d74a6 0%, #0a5d86 100%); color: #fff;">
+                      <h4 style="margin-top: 0; font-weight: 800;">Live Admin</h4>
+                      <p style="opacity: 0.9; line-height: 1.7;">Use the realtime dashboards for inventory, orders, and product updates.</p>
+                      <div style="margin-top: 18px; display: grid; gap: 12px;">
+                        <a href="/admin/realtime/" class="btn btn-light" style="font-weight: 700;">Open Real-Time Dashboard</a>
+                        <a href="/admin/enhanced-realtime/" class="btn btn-light" style="font-weight: 700;">Open Enhanced Dashboard</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endblock %}
+              </section>
+            </div>
 
             <footer class="main-footer" {% if titless %} style="position: fixed; bottom: 0; width: -webkit-fill-available;" {% endif %} >
               <span>Vibe Music Admin Panel</span>

@@ -14,6 +14,18 @@ def order(request):
 
 
 @admin_login_required
+def order_tracker(request):
+    order_details = buyModel.objects.all().order_by('-id')
+    order_dict = {
+        'order_master': 'order',
+        'tracker_master': 'tracker',
+        'tracker_active': 'tracker_master',
+        'order_details': order_details,
+    }
+    return render(request, 'admin/order-1.html', order_dict)
+
+
+@admin_login_required
 def order_detail(request, hid):
     pro_list = Sub_bayModel.objects.filter(order_id=hid)
     order = buyModel.objects.get(id=hid)

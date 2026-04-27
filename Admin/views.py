@@ -15,6 +15,11 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
+from Admin.category.models import categoryModel
+from Admin.product.models import productModel
+from Admin.subcategory.models import brandModel
+from User.models import add_to_cart
+
 
 # Create wraper for admin login
 # Create wraper for admin login
@@ -100,6 +105,10 @@ def some_view(request):
 def dashboard(request):
     items = {
         'titless': 'Dashboard',
+        'total_products': productModel.objects.count(),
+        'total_categories': categoryModel.objects.count(),
+        'total_brands': brandModel.objects.count(),
+        'total_orders': add_to_cart.objects.count(),
     }
     return render(request, 'admin/masterpage/index-1.html', items)
 
@@ -128,94 +137,49 @@ def logout(request):
     return redirect('/admin/accounts/login/')
 
 
+def _resolve_admin_user(identifier):
+    if not identifier:
+        return None
+
+    return User.objects.filter(Q(username=identifier) | Q(email=identifier)).first()
+
+
 def login_attempt(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = (request.POST.get('username') or '').strip()
         password = request.POST.get('password')
 
-        userobj = User.objects.filter(username=username).first()
-        user_obj = User.objects.filter(email=username).first()
+        user = _resolve_admin_user(username)
 
-        if (user_obj or userobj) is None:
+        if user is None:
             messages.success(request, 'Username/Email not found.')
             return redirect(request.META.get('HTTP_REFERER'))
 
-        if not (user_obj or userobj).is_superuser:
+        if not user.is_superuser:
             messages.success(request, "User Can't login")
             return redirect(request.META.get('HTTP_REFERER'))
 
-        if (user_obj or userobj).is_superuser:
-            if not (user_obj or userobj).is_staff:
-                try:
-                    user = UserModel.objects.get(email=username)
-                    user11 = authenticate(username=user, password=password)
-                    if user11 is None:
-                        messages.success(request, 'Wrong Password.')
-                        return redirect('/admin/accounts/login/')
+        authenticated_user = authenticate(username=user.username, password=password)
+        if authenticated_user is None:
+            messages.success(request, 'Wrong Password.')
+            return redirect('/admin/accounts/login/')
 
-                    login(request, user11)
-                    request.session['employee'] = user
-                    if 'last_url' in request.session:
-                        del request.session['last_url']
+        login(request, authenticated_user)
 
-                    return redirect('/admin/order/tracker/')
+        session_key = 'adminuser' if user.is_staff else 'employee'
+        request.session[session_key] = user.username
 
-                except:
-                    usee = None
+        if user.is_staff:
+            request.session['login_time_admin'] = datetime.now().timestamp()
 
-                user1 = authenticate(username=username, password=password)
+        if 'last_url' in request.session:
+            urls = request.session.get('last_url')
+            del request.session['last_url']
+            return redirect('/admin' + urls + '')
 
-                if (user1 or usee) is None:
-                    messages.success(request, 'Wrong Password.')
-                    return redirect('/admin/accounts/login/')
+        if user.is_staff:
+            return redirect('/admin/')
 
-                login(request, user1)
-                request.session['employee'] = username
-                if 'last_url' in request.session:
-                    urls = request.session.get('last_url')
-                    del request.session['last_url']
-                    return redirect('/admin' + urls + '')
-                else:
-                    return redirect('/admin/')
-
-            else:
-                if userobj.is_staff == 2:
-                    messages.success(request, "User Can't login")
-                    return redirect(request.META.get('HTTP_REFERER'))
-                else:
-                    try:
-                        user = UserModel.objects.get(email=username)
-                        user11 = authenticate(username=user, password=password)
-                        if user11 is None:
-                            messages.success(request, 'Wrong Password.')
-                            return redirect('/admin/accounts/login/')
-                        login(request, user11)
-                        request.session['adminuser'] = user
-                        request.session['login_time_admin'] = datetime.now().timestamp()
-                        if 'last_url' in request.session:
-                            urls = request.session.get('last_url')
-                            del request.session['last_url']
-                            return redirect('/admin' + urls + '')
-                        else:
-                            return redirect('/admin/')
-
-                    except:
-                        usee = None
-
-                        user1 = authenticate(username=username, password=password)
-
-                        if (user1 or usee) is None:
-                            messages.success(request, 'Wrong Password.')
-                            return redirect('/admin/accounts/login/')
-
-                        login(request, user1)
-                        request.session['adminuser'] = username
-                        request.session['login_time_admin'] = datetime.now().timestamp()
-                        if 'last_url' in request.session:
-                            urls = request.session.get('last_url')
-                            del request.session['last_url']
-                            return redirect('/admin' + urls + '')
-                        else:
-                            return redirect('/admin/')
+        return redirect('/admin/order/tracker/')
 
     return render(request, 'admin/login.html', {"checkcon": 1, "Title": "Admin "})

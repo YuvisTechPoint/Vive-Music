@@ -72,7 +72,11 @@
     		    <div class="box">
                     <div class="box-body">
     				    <div class="product-img">
-        					<img src="{{i.cat_img.url}}" alt="" class="das" >
+                  {% if i.cat_img %}
+                    <img src="{{i.cat_img.url}}" alt="" class="das" >
+                  {% else %}
+                    <div class="das d-flex align-items-center justify-content-center" style="min-height: 160px; background: #f3f6fa; color: #7a869a; font-weight: 600;">No image</div>
+                  {% endif %}
         					<div class="pro-img-overlay">
         					    <a href="javascript:void(0)" onclick="updateModel({{i.id}})" class="bg-info" style="width: auto !important; padding: 10px 25px !important; margin: 0; margin-top: 50px !important;" >Edit</a>
         					    <a href="javascript:void(0)" onclick="Delete({{i.id}})" class="bg-danger" style="width: auto !important; padding: 10px 25px !important; margin: 0; margin-top: 50px !important;" >Delete</a>

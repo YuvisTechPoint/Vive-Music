@@ -92,7 +92,13 @@
     						        <tbody>
     						            {% for i in order_list %}
         							        <tr>
-                								<td><img src="{{i.product_id.pro_image.url}}" alt="product" width="80"></td>
+                                                <td>
+                                                  {% if i.product_id.pro_image %}
+                                                    <img src="{{i.product_id.pro_image.url}}" alt="product" width="80">
+                                                  {% else %}
+                                                    <span class="text-muted">No image</span>
+                                                  {% endif %}
+                                                </td>
                 								<td>{{i.product_id.productname}}</td>
                 								<td>{{i.quantity}}</td>
                 								<td>₹ {{i.product_id.pro_price}}</td>
